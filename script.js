@@ -98,39 +98,67 @@ new Chart(ctx, {
     }
 });
 
-function getSuggestion(){
+async function getSuggestion() {
 
-    let prompt =
-        document.getElementById("userPrompt")
-        .value.toLowerCase();
+    const prompt =
+        document.getElementById("userPrompt").value;
 
-    let response = "";
+    const output =
+        document.getElementById("aiResponse");
 
-    if(prompt.includes("car") || prompt.includes("vehicle")){
-        response =
-        "🚗 Try using public transport or carpooling 2-3 times per week.";
+    if(prompt.trim() === ""){
+        output.innerText =
+        "Please enter your lifestyle details.";
+        return;
     }
 
-    else if(prompt.includes("ac")){
-        response =
-        "❄ Reduce AC usage by 1 hour daily.";
-    }
+    output.innerText = "🤖 Generating AI recommendations...";
 
-    else if(prompt.includes("electricity")){
-        response =
-        "💡 Switch to LED bulbs and unplug unused devices.";
-    }
+    
+    const fullPrompt = `
+    You are an eco sustainability expert.
 
-    else if(prompt.includes("plastic")){
-        response =
-        "♻ Use reusable bottles and cloth bags.";
-    }
+    Analyze the following lifestyle and provide:
+    1. Carbon footprint concerns
+    2. Eco-friendly suggestions
+    3. A sustainability score out of 10
 
-    else{
-        response =
-        "🌱 Continue adopting sustainable habits and monitor your carbon footprint regularly.";
-    }
+    Lifestyle:
+    ${prompt}
+    `;
 
-    document.getElementById("aiResponse").innerText =
-        response;
+    try{
+
+        const response =
+        await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                contents: [
+                    {
+                        parts: [
+                            {
+                                text: fullPrompt
+                            }
+                        ]
+                    }
+                ]
+            })
+        });
+
+        const data = await response.json();
+
+        output.innerText =
+        data.candidates[0].content.parts[0].text;
+
+    }
+    catch(error){
+
+        output.innerText =
+        "Error connecting to Gemini AI.";
+    }
 }
