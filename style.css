@@ -1,0 +1,141 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#edf1ee;
+}
+
+header{
+    background:#2e7d32;
+    color:white;
+    text-align:center;
+    padding:30px;
+}
+
+.stats-container{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+    margin:30px;
+}
+
+.stat-card{
+    background:white;
+    width:220px;
+    padding:20px;
+    border-radius:12px;
+    text-align:center;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.stat-card h3{
+    color:#2e7d32;
+}
+
+.container{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:25px;
+    margin:30px;
+}
+
+.card{
+    background:white;
+    padding:25px;
+    width:450px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.card h2{
+    margin-bottom:20px;
+}
+
+label{
+    display:block;
+    margin-top:12px;
+}
+
+input,
+select{
+    width:100%;
+    padding:10px;
+    margin-top:5px;
+}
+
+button{
+    width:100%;
+    margin-top:20px;
+    padding:12px;
+    border:none;
+    background:#2e7d32;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1b5e20;
+}
+
+.result{
+    text-align:center;
+}
+
+.chart-container{
+    width:80%;
+    max-width:900px;
+    height:400px;
+    margin:30px auto;
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+.challenge-card{
+    width:80%;
+    margin:30px auto;
+}
+
+.challenge-card p{
+    margin-top:10px;
+}
+
+.ai-card{
+    width:80%;
+    margin:30px auto;
+}
+
+textarea{
+    width:100%;
+    padding:12px;
+    margin:15px 0;
+    border-radius:8px;
+    resize:none;
+}
+
+#aiResponse{
+    margin-top:15px;
+    color:#2e7d32;
+    font-weight:bold;
+}
+.hero{
+    text-align:center;
+    padding:30px;
+}
+
+.hero h2{
+    color:#2e7d32;
+    margin-bottom:10px;
+}
+
+.hero p{
+    color:#555;
+}

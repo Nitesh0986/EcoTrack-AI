@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrack AI</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <header>
+        <h1>🌱 EcoTrack AI</h1>
+        <p>Track and Reduce Your Carbon Footprint</p>
+    </header>
+    <section class="hero">
+    <h2>🌎 Reduce Your Carbon Footprint with AI</h2>
+    <p>
+        Monitor emissions, get sustainability insights,
+        and build eco-friendly habits.
+    </p>
+</section>
+
+    <!-- Dashboard Cards -->
+
+    <div class="stats-container">
+
+        <div class="stat-card">
+            <h3 id="topScore">--</h3>
+            <p>Carbon Score</p>
+        </div>
+
+        <div class="stat-card">
+            <h3 id="todayEmission">--</h3>
+            <p>Today's CO₂</p>
+        </div>
+
+        <div class="stat-card">
+            <h3 id="monthEmission">--</h3>
+            <p>Monthly CO₂</p>
+        </div>
+
+        <div class="stat-card">
+            <h3 id="ecoLevel">--</h3>
+            <p>Eco Level</p>
+        </div>
+
+    </div>
+
+    <!-- Calculator -->
+
+    <div class="container">
+
+        <div class="card">
+
+            <h2>Carbon Footprint Calculator</h2>
+
+            <label>Transportation</label>
+            <select id="transport">
+                <option value="5">Car</option>
+                <option value="3">Bus</option>
+                <option value="2">Bike</option>
+                <option value="0">Walk</option>
+            </select>
+
+            <label>Distance Travelled (km/day)</label>
+            <input type="number" id="distance">
+
+            <label>Electricity Usage (Units/month)</label>
+            <input type="number" id="electricity">
+
+            <label>Food Habit</label>
+            <select id="food">
+                <option value="20">Non-Veg</option>
+                <option value="10">Mixed</option>
+                <option value="5">Vegetarian</option>
+            </select>
+
+            <button onclick="calculateCarbon()">
+                Calculate Footprint
+            </button>
+
+        </div>
+
+        <div class="card result">
+
+            <h2>Your Results</h2>
+
+            <h3 id="score">
+                Carbon Score: --
+            </h3>
+
+            <p id="emission">
+                Monthly Emission: --
+            </p>
+
+            <p id="recommendation">
+                Recommendation will appear here.
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- Graph -->
+
+    <div class="chart-container">
+        <canvas id="carbonChart"></canvas>
+    </div>
+
+    <!-- Eco Challenge -->
+
+    <div class="card challenge-card">
+
+        <h2>🌍 Today's Eco Challenge</h2>
+
+        <p>☑ Carry a reusable water bottle</p>
+        <p>☐ Walk 2 km</p>
+        <p>☐ Save 1 electricity unit</p>
+
+    </div>
+
+    <!-- AI Coach -->
+
+    <div class="card ai-card">
+
+        <h2>🤖 AI Sustainability Coach</h2>
+
+        <textarea
+            id="userPrompt"
+            rows="5"
+            placeholder="Describe your lifestyle..."
+        ></textarea>
+
+        <button onclick="getSuggestion()">
+            Get AI Suggestions
+        </button>
+
+        <p id="aiResponse">
+            AI recommendations will appear here.
+        </p>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
