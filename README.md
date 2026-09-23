@@ -138,5 +138,3 @@ EcoTrack-AI empowers users to make informed decisions that contribute to environ
 ## Author
 
 Nitesh Barnwal
-
-Hackathon Submission – PromptWars Challenge 3
