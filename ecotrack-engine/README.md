@@ -230,13 +230,13 @@ pytest test_plugin.py -v
 To consume `ecotrack-engine` inside an Anna App:
 
 ### A. Reference in `manifest.json`
-Declare `tool-dev-ecotrack-engine` under `required_executas` and `ui.host_api.tools`:
+Declare `tool-nitesh-ai-ecotrack-engine-49j33jdk` under `required_executas` and `ui.host_api.tools`:
 ```json
 {
   "schema": 2,
   "required_executas": [
     {
-      "tool_id": "tool-dev-ecotrack-engine"
+      "tool_id": "tool-nitesh-ai-ecotrack-engine-49j33jdk"
     }
   ],
   "tags": ["sustainability", "carbon", "climate"],
@@ -246,7 +246,7 @@ Declare `tool-dev-ecotrack-engine` under `required_executas` and `ui.host_api.to
       "entry": "index.html"
     },
     "host_api": {
-      "tools": ["tool-dev-ecotrack-engine"],
+      "tools": ["tool-nitesh-ai-ecotrack-engine-49j33jdk"],
       "storage": ["get", "set"],
       "window": ["set_title", "ready"]
     }
