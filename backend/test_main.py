@@ -18,7 +18,6 @@ def test_health_endpoint():
     assert response.json() == {"status": "healthy"}
 
 def test_analyze_emissions_validation_error_negative_values():
-    # Negative values should trigger 422 Unprocessable Entity via Pydantic
     payload = {
         "transport_km": -10.0,
         "electricity_kwh": 5.0,
@@ -28,17 +27,30 @@ def test_analyze_emissions_validation_error_negative_values():
     assert response.status_code == 422
 
 def test_analyze_emissions_validation_error_missing_fields():
-    # Missing fields should trigger 422 Unprocessable Entity
     payload = {
         "transport_km": 10.0
     }
     response = client.post("/api/analyze-emissions", json=payload)
     assert response.status_code == 422
 
+def test_analyze_emissions_heuristic_fallback_without_api_key(monkeypatch):
+    monkeypatch.setenv("GEMINI_API_KEY", "")
+    payload = {
+        "transport_km": 10.0,
+        "electricity_kwh": 20.0,
+        "waste_kg": 5.0
+    }
+    response = client.post("/api/analyze-emissions", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["carbon_score_kg"] == 13.4
+    assert len(data["recommendations"]) == 3
+    assert data["ai_powered"] is False
+    assert "Demonstration Mode" in data["notice"]
+
 def test_analyze_emissions_calculation_and_mocked_gemini(monkeypatch):
     monkeypatch.setenv("GEMINI_API_KEY", "test-mock-key")
     
-    # Expected score: 10 * 0.21 + 20 * 0.42 + 5 * 0.58 = 2.1 + 8.4 + 2.9 = 13.4
     expected_score = round(
         (10.0 * EMISSION_FACTORS["transport"]) +
         (20.0 * EMISSION_FACTORS["electricity"]) +
@@ -69,3 +81,4 @@ def test_analyze_emissions_calculation_and_mocked_gemini(monkeypatch):
         assert data["carbon_score_kg"] == expected_score
         assert len(data["recommendations"]) == 3
         assert data["recommendations"] == mock_tips
+        assert data["ai_powered"] is True

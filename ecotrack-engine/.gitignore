@@ -1,0 +1,36 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Build and package artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Testing cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Anna platform local credentials & session caches
+.anna/
+
+# Secrets & Environment configs
+.env
+*.env
+!.env.example
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,9 @@
+{
+  "slug": "ecotrack-engine",
+  "name": "ecotrack-engine",
+  "version": "0.1.0",
+  "executa_type": "tool",
+  "description": "Track carbon emissions, understand your environmental impact, and discover practical ways to live more sustainably.",
+  "tool_id": "tool-dev-ecotrack-engine",
+  "type": "python"
+}

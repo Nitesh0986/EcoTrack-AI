@@ -1,6 +1,6 @@
 import os
 import json
-from typing import List
+from typing import List, Optional
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,10 +16,6 @@ except ImportError:
     USE_NEW_SDK = False
 
 load_dotenv()
-
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    print("WARNING: GEMINI_API_KEY environment variable is not configured. Set it in .env before running inferences.")
 
 app = FastAPI(
     title="EcoTrack-AI Backend Engine",
@@ -62,6 +58,8 @@ class CarbonData(BaseModel):
 class AnalysisResponse(BaseModel):
     carbon_score_kg: float
     recommendations: List[str]
+    ai_powered: bool = True
+    notice: Optional[str] = None
 
 # Conversion metrics: kg CO2e per unit (EPA/DEFRA standard emission baselines)
 EMISSION_FACTORS = {
@@ -70,8 +68,26 @@ EMISSION_FACTORS = {
     "waste": 0.58        # Landfill waste lifecycle emissions per kg
 }
 
+def generate_heuristic_tips(data: CarbonData) -> List[str]:
+    """Generates structured expert recommendations dynamically based on highest emission categories."""
+    emissions = {
+        "transport": data.transport_km * EMISSION_FACTORS["transport"],
+        "electricity": data.electricity_kwh * EMISSION_FACTORS["electricity"],
+        "waste": data.waste_kg * EMISSION_FACTORS["waste"]
+    }
+    sorted_categories = sorted(emissions.items(), key=lambda item: item[1], reverse=True)
+
+    recommendations_map = {
+        "transport": "Optimize transit efficiency: Transition solo commuting to public transit, carpooling, or electric mobility to cut transport emissions.",
+        "electricity": "Target electrical grid draw: Deploy programmable smart thermostats, convert lighting to high-lumen LEDs, and shift heavy appliance use off-peak.",
+        "waste": "Eliminate landfill methane generation: Institute kitchen source-separation composting and prioritize bulk purchasing with reusable containers."
+    }
+
+    return [recommendations_map[cat] for cat, _ in sorted_categories]
+
 @app.post("/api/analyze-emissions", response_model=AnalysisResponse)
 async def analyze_emissions(data: CarbonData):
+    # Compute deterministic carbon footprint
     raw_carbon_score = round(
         (data.transport_km * EMISSION_FACTORS["transport"]) +
         (data.electricity_kwh * EMISSION_FACTORS["electricity"]) +
@@ -79,11 +95,19 @@ async def analyze_emissions(data: CarbonData):
         2
     )
 
+    # Hot-reload from .env if not explicitly set in environment
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        raise HTTPException(
-            status_code=500,
-            detail="GEMINI_API_KEY is not configured on the server. Please add it to your .env file."
+        load_dotenv(override=True)
+        api_key = os.getenv("GEMINI_API_KEY")
+
+    # If no key or placeholder is present, gracefully provide expert heuristic interventions
+    if not api_key or api_key.strip() in ("", "your_gemini_api_key_here"):
+        return AnalysisResponse(
+            carbon_score_kg=raw_carbon_score,
+            recommendations=generate_heuristic_tips(data),
+            ai_powered=False,
+            notice="Operating in Demonstration Mode. Add GEMINI_API_KEY to backend/.env to activate live Google Gemini AI generative analysis."
         )
 
     prompt = f"""
@@ -129,10 +153,14 @@ async def analyze_emissions(data: CarbonData):
 
         return AnalysisResponse(
             carbon_score_kg=raw_carbon_score,
-            recommendations=parsed_tips
+            recommendations=parsed_tips,
+            ai_powered=True
         )
     except Exception as exc:
-        raise HTTPException(
-            status_code=502,
-            detail=f"Downstream LLM inference failure: {str(exc)}"
+        # Fallback to heuristic recommendations on LLM upstream failure so user is never blocked
+        return AnalysisResponse(
+            carbon_score_kg=raw_carbon_score,
+            recommendations=generate_heuristic_tips(data),
+            ai_powered=False,
+            notice=f"LLM API temporarily unavailable ({str(exc)[:60]}...). Displaying deterministic baseline interventions."
         )
